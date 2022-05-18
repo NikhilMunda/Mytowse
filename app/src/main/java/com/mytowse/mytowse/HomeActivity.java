@@ -2,6 +2,7 @@ package com.mytowse.mytowse;
 
 import static com.mytowse.mytowse.R.color.teal_700;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -58,7 +59,7 @@ public class HomeActivity extends AppCompatActivity {
 
             //Check Internet
                 if (isNetworkAvailable() == false) {
-                    new AlertDialog.Builder(this)
+                    final AlertDialog dialog = new AlertDialog.Builder(this)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setTitle("Internet Connection Alert")
                             .setMessage("Please Check Your Internet Connection")
@@ -69,6 +70,7 @@ public class HomeActivity extends AppCompatActivity {
                                     startActivity(getIntent());
                                 }
                             }).show();
+                    dialog.setCancelable(false);
                 } else if (isNetworkAvailable() == true) {
 
                     //My web Url

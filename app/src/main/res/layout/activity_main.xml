@@ -14,5 +14,16 @@
         android:background="#F6F6F6"
         app:srcCompat="@mipmap/ic_launcher_foreground" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:textStyle="italic"
+        android:layout_alignBottom="@id/imageView3"
+        android:layout_centerInParent="true"
+        android:text="Developed by Nikhil Munda"
+        android:textColor="@color/black" />
+
 
 </RelativeLayout>
