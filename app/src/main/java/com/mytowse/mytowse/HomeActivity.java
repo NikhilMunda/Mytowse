@@ -2,9 +2,11 @@ package com.mytowse.mytowse;
 
 import static com.mytowse.mytowse.R.color.teal_700;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
@@ -24,58 +26,56 @@ public class HomeActivity extends AppCompatActivity {
 
     private WebView webView;
 
-
-
         @Override
         protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_home);
+            //Titlebar
+            getSupportActionBar().hide();
 
-            if(!isNetworkAvailable()==true)
-            {
-                new AlertDialog.Builder(this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Internet Connection Alert")
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("TRY AGAIN", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                finish();
-                                startActivity(getIntent());
-                            }
-                        }).show();
+            //Change the colour of top bar
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(getResources().getColor(teal_700));
             }
-            else if(isNetworkAvailable()==true)
-            {
-                getSupportActionBar().hide();
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    getWindow().setStatusBarColor(getResources().getColor(teal_700));
+            webView = findViewById(R.id.webView);
+            WebSettings webSettings = webView.getSettings();
+            webView.setWebViewClient(new MyWebviewClient());
+            webView.getSettings().setJavaScriptEnabled(true);
+
+            //improve WebView performance
+            webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
+            webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+            webSettings.setAppCacheEnabled(true);
+            webSettings.setDomStorageEnabled(true);
+            webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+            webSettings.setUseWideViewPort(true);
+            webSettings.setSavePassword(true);
+            webSettings.setSaveFormData(true);
+            webSettings.setEnableSmoothTransition(true);
+
+
+            //Check Internet
+                if (isNetworkAvailable() == false) {
+                    new AlertDialog.Builder(this)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setTitle("Internet Connection Alert")
+                            .setMessage("Please Check Your Internet Connection")
+                            .setPositiveButton("TRY AGAIN", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    finish();
+                                    startActivity(getIntent());
+                                }
+                            }).show();
+                } else if (isNetworkAvailable() == true) {
+
+                    //My web Url
+                    webView.loadUrl("https://www.mytowse.com");
                 }
 
-                webView = findViewById(R.id.webView);
-                WebSettings webSettings = webView.getSettings();
-                webView.setWebViewClient(new MyWebviewClient());
-                webView.getSettings().setJavaScriptEnabled(true);
-
-                //improve WebView performance
-                webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
-                webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-                webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-                webSettings.setAppCacheEnabled(true);
-                webSettings.setDomStorageEnabled(true);
-                webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
-                webSettings.setUseWideViewPort(true);
-                webSettings.setSavePassword(true);
-                webSettings.setSaveFormData(true);
-                webSettings.setEnableSmoothTransition(true);
-
-                webView.loadUrl("https://www.mytowse.com");
-                Toast.makeText(HomeActivity.this,
-                        "Welcome", Toast.LENGTH_LONG).show();
             }
-
-        }
 
     public boolean isNetworkAvailable() {
 
@@ -84,7 +84,7 @@ public class HomeActivity extends AppCompatActivity {
         if (connectivityManager != null) {
 
 
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
                 NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
                 if (capabilities != null) {
@@ -101,11 +101,12 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         }
-
         return false;
 
-    }
+   }
 
+
+    //To go back while surffing webpage
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
         if(keyCode == KeyEvent.KEYCODE_BACK && this.webView.canGoBack()){
@@ -115,10 +116,12 @@ public class HomeActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+
     private class MyWebviewClient extends WebViewClient {
+
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            if (url.contains("https://mytowse.com"))
+            if (url.contains("https://mytowse.com"))  //Open mytowse link in app only
             {
                 return false;
             }

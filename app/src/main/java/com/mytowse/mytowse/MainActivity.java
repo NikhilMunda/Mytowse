@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Handler;
+import android.view.Gravity;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
                 finish();
             }
-        }, 3000);
+        }, 2000);
 
     }
 }
